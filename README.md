@@ -151,4 +151,4 @@ Johannes Krüger
 
 ## Disclaimer
 
-This README was partly created by AI. I wrote the code in this project on my own and used AI for fixing bugs.
+This README was partly created by AI. I wrote the code in this project on my own and used AI as an assistance.
