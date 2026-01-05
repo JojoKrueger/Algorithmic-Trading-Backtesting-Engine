@@ -1,0 +1,18 @@
+# Database (too large for GitHub, users will download their own data)
+data/market_data.db
+
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+
+# Generated files
+*.png
