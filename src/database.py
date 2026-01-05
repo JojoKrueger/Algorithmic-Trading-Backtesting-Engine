@@ -1,10 +1,16 @@
 import sqlite3
 from pathlib import Path
+import os
 
 import pandas as pd
 
-# Database file location
-DB_PATH = Path(__file__).parent.parent / "data" / "market_data.db"
+# Check if running on Streamlit Cloud
+if os.environ.get("STREAMLIT_SHARING_MODE") or os.path.exists("/mount/src"):
+    # Streamlit Cloud - use temp directory
+    DB_PATH = Path("/tmp/market_data.db")
+else:
+    # Local development
+    DB_PATH = Path(__file__).parent.parent / "data" / "market_data.db"
 
 
 def init_database():
