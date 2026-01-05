@@ -16,6 +16,12 @@ st.set_page_config(
 st.title("📈 Algorithmic Trading Backtesting Engine")
 st.write("Compare trading strategies on S&P 500 stocks using 10 years of historical data.")
 
+from src.downloader import download_all_tickers
+
+# Demo tickers for Streamlit Cloud
+DEMO_TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", 
+                "META", "TSLA", "JPM", "V", "WMT"]
+
 # Initialize database
 init_database()
 
@@ -23,8 +29,12 @@ init_database()
 existing_tickers = get_existing_tickers()
 
 if len(existing_tickers) == 0:
-    st.error("No data in database. Please run `python main.py` locally to download data first.")
-    st.stop()
+    st.warning("No data found. Downloading demo data (10 stocks, 5 years)...")
+    with st.spinner("This may take a few minutes on first run..."):
+        download_all_tickers(DEMO_TICKERS, years=5)
+    existing_tickers = get_existing_tickers()
+    st.success(f"Downloaded data for {len(existing_tickers)} stocks!")
+    st.rerun()  # Refresh the page
 
 # Sidebar for inputs
 st.sidebar.header("Settings")
