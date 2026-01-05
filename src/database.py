@@ -4,20 +4,19 @@ import os
 
 import pandas as pd
 
-# Check if running on Streamlit Cloud
+
+# Resolve database location based on runtime environment
+# Streamlit Cloud does not allow writing to the project directory
 if os.environ.get("STREAMLIT_SHARING_MODE") or os.path.exists("/mount/src"):
-    # Streamlit Cloud - use temp directory
     DB_PATH = Path("/tmp/market_data.db")
 else:
-    # Local development
     DB_PATH = Path(__file__).parent.parent / "data" / "market_data.db"
 
 
 def init_database():
     """
-    Creates the OHLCV table if it doesn't already exist.
-    
-    This is safe to call multiple times - it won't destroy existing data.
+    Initialize the local SQLite database and create required tables
+    if they do not already exist.
     """
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
@@ -43,19 +42,13 @@ def init_database():
 
 def insert_ohlcv(df, ticker):
     """
-    Inserts OHLCV data for a single ticker into the database.
-    
-    Args:
-        df: DataFrame with columns: Date, Open, High, Low, Close, Volume
-        ticker: Stock symbol (e.g., "AAPL")
+    Insert OHLCV data for a single ticker into the database.
+    Assumes the input DataFrame follows a standard market data format.
     """
-    # Make a copy so we don't modify the original
     data = df.copy()
     
-    # Add the ticker column
+    # Normalize schema to match database table
     data["ticker"] = ticker
-    
-    # Rename columns to match our database schema
     data = data.rename(columns={
         "Date": "date",
         "Open": "open",
@@ -65,10 +58,8 @@ def insert_ohlcv(df, ticker):
         "Volume": "volume"
     })
     
-    # Keep only the columns we need, in the right order
     data = data[["ticker", "date", "open", "high", "low", "close", "volume"]]
     
-    # Insert into database
     connection = sqlite3.connect(DB_PATH)
     data.to_sql("ohlcv", connection, if_exists="append", index=False)
     connection.close()
@@ -78,15 +69,7 @@ def insert_ohlcv(df, ticker):
 
 def get_ohlcv(ticker, start_date=None, end_date=None):
     """
-    Retrieves OHLCV data for a ticker from the database.
-    
-    Args:
-        ticker: Stock symbol (e.g., "AAPL")
-        start_date: Optional start date (string: "YYYY-MM-DD")
-        end_date: Optional end date (string: "YYYY-MM-DD")
-    
-    Returns:
-        DataFrame with the requested data
+    Fetch OHLCV data for a ticker, optionally constrained by date range.
     """
     connection = sqlite3.connect(DB_PATH)
     
@@ -111,7 +94,7 @@ def get_ohlcv(ticker, start_date=None, end_date=None):
 
 def get_existing_tickers():
     """
-    Returns a list of tickers that already have data in the database.
+    Return all tickers currently present in the database.
     """
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
@@ -121,8 +104,6 @@ def get_existing_tickers():
     
     connection.close()
     
-    # fetchall returns list of tuples: [("AAPL",), ("MSFT",), ...]
-    # We extract just the ticker strings
     return [row[0] for row in results]
 
 
