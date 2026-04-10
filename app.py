@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # Title and description
-st.title("📈 Algorithmic Trading Backtesting Engine")
+st.title("Algorithmic Trading Backtesting Engine")
 st.write("Compare trading strategies on S&P 500 stocks using 10 years of historical data.")
 
 from src.downloader import download_all_tickers
@@ -112,12 +112,12 @@ if st.sidebar.button("Run Backtest", type="primary"):
     st.write(f"Period: {start_date} to {end_date} | Starting Capital: \${starting_cash:,} | Best End Value: \${best_end_value:,.2f}")
     
     # Results table
-    st.subheader("📊 Performance Comparison")
+    st.subheader("Performance Comparison")
     results_df = pd.DataFrame(results)
     st.dataframe(results_df, use_container_width=True, hide_index=True)
     
     # Key metrics cards
-    st.subheader("🏆 Key Insights")
+    st.subheader("Key Insights")
     
     col1, col2, col3 = st.columns(3)
     
@@ -149,7 +149,7 @@ if st.sidebar.button("Run Backtest", type="primary"):
         )
     
     # Portfolio value chart
-    st.subheader("📈 Portfolio Value Over Time")
+    st.subheader("Portfolio Value Over Time")
     
     # Get dates for x-axis
     df = get_ohlcv(ticker, str(start_date), str(end_date))
@@ -175,7 +175,7 @@ if st.sidebar.button("Run Backtest", type="primary"):
     st.pyplot(fig)
     
     # Strategy explanations
-    with st.expander("📚 Strategy Explanations"):
+    with st.expander("Strategy Explanations"):
         st.markdown("""
         **Buy & Hold**: Buy on day one, hold until the end. The baseline strategy.
         
@@ -194,7 +194,7 @@ if st.sidebar.button("Run Backtest", type="primary"):
 
 else:
     # Show instructions when app first loads
-    st.info("👈 Configure your backtest settings in the sidebar and click 'Run Backtest'")
+    st.info("Configure your backtest settings in the sidebar and click 'Run Backtest'")
     
     st.markdown("""
     ### How to Use
